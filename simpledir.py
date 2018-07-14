@@ -68,8 +68,8 @@ class SimpleDir( object ):
         for name,dict_ in self.contents['files'].items():
             if dict_['path'].match( glob ):
                 matches.append( dict_ )
-        print( 'FILE MATCHES' )
-        pprint.pprint( matches )
+#        print( 'FILE MATCHES' )
+#        pprint.pprint( matches )
         return self._file_sorter( matches, sortby, reverse )
 
 

@@ -45,10 +45,18 @@ class BrewLog( object ):
         self._load_data()
 
 
+    def timestamps( self ):
+        return [ r[0] for r in self.data['values'] ]
+
+
+    def headers( self ):
+        return self.data['labels']
+
+
     def _load_data( self ):
         # get list of json files from simpledir
         jsonfiles = self.dir.files_matching_glob( '*.json', sortby='st_mtime' )
-        pprint.pprint( jsonfiles )
+#        pprint.pprint( jsonfiles )
         # parse json data (as in mk_brewlog_graphs)
         self._parse_jsondata( jsonfiles )
 
