@@ -109,12 +109,12 @@ class BrewLog( object ):
             for i in col_nums:
                 elem = row['c'][i]
                 typ = data[ 'cols' ][ i ][ 'type' ]
-                values.append( self.j2py( elem, typ ) )
+                values.append( self.js2py( elem, typ ) )
             rows.append( values )
         return ( labels, rows )
 
     @staticmethod
-    def j2py( elem, typ ):
+    def js2py( elem, typ ):
         ''' Convert a json value into a native python datatype
         '''
         val = None

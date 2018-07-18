@@ -1,0 +1,3 @@
+[submodule "submodules/simplegoogledrive"]
+	path = submodules/simplegoogledrive
+	url = https://github.com/andylytical/simplegoogledrive.git
