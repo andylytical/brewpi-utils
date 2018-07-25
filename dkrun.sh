@@ -4,13 +4,6 @@
 #  BEGIN CUSTOMIZATIONS
 ###
 
-# Uncomment to turn on debugging
-DEBUG=1
-
-# Uncomment to enable test mode (show what would be run)
-#TEST=1
-
-
 ###
 # Set Docker Image Parts
 
@@ -39,7 +32,9 @@ ENVIRON['GOOGLE_AUTH_CREDENTIALS_FILE']="$HOME/.googleauth/credentials.json"
 # New spreadsheets will be created in this folder
 ENVIRON['GOOGLE_DRIVE_FOLDER_ID']='1d57i-VAQRbCfLDIb9JCHGI3GPBK8cZ4O'
 
-# If an existing spreadsheet is not found, create a copy of one using this template
+# If an existing spreadsheet is not found, create one from this template
+# This template id is public and can be viewed at:
+# https://docs.google.com/spreadsheets/d/1U0B7wu07bCH5X6Yfc3FQWgNEwMpoNCg8eDPtjlH0j6w
 ENVIRON['GOOGLE_SHEETS_TEMPLATE_ID']='1U0B7wu07bCH5X6Yfc3FQWgNEwMpoNCg8eDPtjlH0j6w'
 
 # Name of the google spreadsheet to load data into
@@ -53,7 +48,7 @@ ENVIRON['GOOGLE_SHEETS_SHEET_NAME']='RIMS Data'
 # Which column (in the goole sheet) has the timestamp
 #ENVIRON['GOOGLE_SHEETS_TSDB_PRIMARY_COLUMN']='A'
 
-# Keep matching cols, ignore all others
+# Include only cols matching this regex, ignore all others
 #ENVIRON['BREWLOG_COLS_REGEX']='.'
 
 # 1=keep empty cols, 0=filter empty cols
@@ -64,10 +59,12 @@ ENVIRON['GOOGLE_SHEETS_SHEET_NAME']='RIMS Data'
 #  END OF CUSTOMIZATIONS
 ###
 
+
 die() {
     echo "ERR: $*"
     exit 99
 }
+
 
 latest_docker_tag() {
     # Based on code from:
@@ -85,10 +82,50 @@ latest_docker_tag() {
     | head -1
 }
 
-[[ $DEBUG -eq 1 ]] && set -x
 
-action=
-[[ $TEST -eq 1 ]] && action=echo
+usage() {
+    local prg=$(basename $0)
+    cat <<ENDHERE
+
+Usage: $prg [options] <path/to/directory>
+
+Options:
+    -b BEERNAME - backup up only the beer matching this name prefix
+                  Default: search for latest brewlog
+    -o          - Run once
+                  Default: run continously
+    -s SECONDS  - Time between runs (in continuous mode)
+                  Default: 60
+    -h          - Print this help message
+    -d          - Run in debug mode (lots of output)
+ENDHERE
+}
+
+
+# Process options
+DEBUG=0
+TEST=0
+VERBOSE=1
+ENDWHILE=0
+while [[ $# -gt 0 ]] && [[ $ENDWHILE -eq 0 ]] ; do
+	case $1 in
+        -b) ENVIRON['BREWPI_BACKUP_BEERNAME']="$2"; shift;;
+		-d) DEBUG=1;;
+		-h) usage;;
+		-o) ENVIRON['BREWPI_BACKUP_RUN_ONCE']='1';;
+		-s) ENVIRON['BREWPI_BACKUP_INTERVAL_SECONDS']="$2"; shift;;
+        -t) TEST=1;;
+		--) ENDWHILE=1;;
+		-*) echo "Invalid option '$1'"; exit 1;;
+		 *) ENDWHILE=1; break;;
+	esac
+	shift
+done
+
+if [[ $DEBUG -eq 1 ]] ; then
+    set -x
+    for k in "${!ENVIRON[@]}"; do printf '% 31s ... %s\n' "$k" "${ENVIRON[$k]}"; done
+fi
 
 DK_TAG=$( latest_docker_tag "$DK_USER/$DK_IMAGE" )
 [[ -z "$DK_TAG" ]] && die "No tags found for docker image: '$DK_USER/$DK_IMAGE'"
@@ -105,6 +142,8 @@ for src in "${!MOUNTPOINTS[@]}"; do
     mounts+=( '--mount' "type=bind,src=$src,dst=$dst" )
 done
 
+action=
+[[ $TEST -eq 1 ]] && action=echo
 $action docker run \
     "${envs[@]}" \
     "${mounts[@]}" \
