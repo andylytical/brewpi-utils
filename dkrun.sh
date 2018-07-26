@@ -4,23 +4,20 @@
 #  BEGIN CUSTOMIZATIONS
 ###
 
-###
-# Set Docker Image Parts
+## Set Docker Image Parts
 
 # (don't need docker image tag, it will be queried at runtime)
 DK_USER=andylytical
 DK_IMAGE=brewpi-backup
 
 
-###
-# Set volume mounts
+## Set volume mounts
 
 # Associative array; key=src, val=tgt
 declare -A MOUNTPOINTS=( ["$HOME"]="$HOME" )
 
 
-###
-# Set Environment Variable(s) for Container
+## Set Environment Variable(s) for Container
 declare -A ENVIRON
 
 # Google OAuth secret and credentials
@@ -54,10 +51,13 @@ ENVIRON['GOOGLE_SHEETS_SHEET_NAME']='RIMS Data'
 # 1=keep empty cols, 0=filter empty cols
 #ENVIRON['BREWLOG_KEEP_EMPTY_COLS']=1
 
-
 ###
 #  END OF CUSTOMIZATIONS
 ###
+
+
+# Default variable settings
+ENVIRON['BREWPI_BACKUP_INTERVAL_SECONDS']=60
 
 
 die() {
@@ -95,7 +95,7 @@ Options:
     -o          - Run once
                   Default: run continously
     -s SECONDS  - Time between runs (in continuous mode)
-                  Default: 60
+                  Default: ${ENVIRON['BREWPI_BACKUP_INTERVAL_SECONDS']}
     -h          - Print this help message
     -d          - Run in debug mode (lots of output)
 ENDHERE
@@ -108,24 +108,26 @@ TEST=0
 VERBOSE=1
 ENDWHILE=0
 while [[ $# -gt 0 ]] && [[ $ENDWHILE -eq 0 ]] ; do
-	case $1 in
+    case $1 in
         -b) ENVIRON['BREWPI_BACKUP_BEERNAME']="$2"; shift;;
-		-d) DEBUG=1;;
-		-h) usage;;
-		-o) ENVIRON['BREWPI_BACKUP_RUN_ONCE']='1';;
-		-s) ENVIRON['BREWPI_BACKUP_INTERVAL_SECONDS']="$2"; shift;;
+        -d) DEBUG=1;;
+        -h) usage;;
+        -o) ENVIRON['BREWPI_BACKUP_RUN_ONCE']='1';;
+        -s) ENVIRON['BREWPI_BACKUP_INTERVAL_SECONDS']="$2"; shift;;
         -t) TEST=1;;
-		--) ENDWHILE=1;;
-		-*) echo "Invalid option '$1'"; exit 1;;
-		 *) ENDWHILE=1; break;;
-	esac
-	shift
+        --) ENDWHILE=1;;
+        -*) echo "Invalid option '$1'"; exit 1;;
+         *) ENDWHILE=1; break;;
+    esac
+    shift
 done
 
 if [[ $DEBUG -eq 1 ]] ; then
-    set -x
+    set +x
     for k in "${!ENVIRON[@]}"; do printf '% 31s ... %s\n' "$k" "${ENVIRON[$k]}"; done
+    set -x
 fi
+exit 1
 
 DK_TAG=$( latest_docker_tag "$DK_USER/$DK_IMAGE" )
 [[ -z "$DK_TAG" ]] && die "No tags found for docker image: '$DK_USER/$DK_IMAGE'"
