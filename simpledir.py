@@ -12,8 +12,7 @@ class SimpleDir( object ):
 
     def __init__( self, path ):
         self.path = pathlib.Path( path ).resolve( strict=True )
-        self.contents = {}
-        self._load_contents()
+        self.refresh()
 
 
     def _load_contents( self ):

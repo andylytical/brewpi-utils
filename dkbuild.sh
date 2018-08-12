@@ -9,4 +9,5 @@ TAG=$( date "+%Y%m%d" )
 # BUILD IMAGE
 docker build . -t $IMAGE:$TAG
 docker tag $IMAGE:$TAG $USER/$IMAGE:$TAG
-#docker push $USER/$IMAGE:$TAG
+#docker tag $USER/$IMAGE:$TAG $USER/$IMAGE:latest
+docker push $USER/$IMAGE:$TAG

@@ -78,14 +78,20 @@ def update_cloud( local, cloud ):
 
 
 def run_loop( continuous=True ):
-    pause = os.environ['BREWPI_BACKUP_INTERVAL_SECONDS']
+    pause = int( os.environ['BREWPI_BACKUP_INTERVAL_SECONDS'] )
     while True:
+        print( "Start new loop...\n find latest beerlog" )
         beer = get_latest_beerlog()
+        print( "  get-or-create TSDB" )
         tsdb = get_or_create_tsdb( beer.name )
+        print( "  assert headers equal" )
         assert_headers_equal( tsdb, beer )
+        print( "  update cloud data" )
         update_cloud( beer, tsdb )
         if not continuous:
+            print( "  end" )
             break
+        print( "  pause {}".format( pause ) )
         time.sleep( pause )
 
 

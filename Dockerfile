@@ -4,7 +4,10 @@ FROM python:3
 #RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 WORKDIR /src
-COPY . /src
+#COPY . /src
+COPY requirements.txt /src/
+COPY *.py /src/
+COPY submodules/*/*.py /src/
 RUN pip install -r /src/requirements.txt
 
 CMD ["bash"]

@@ -4,20 +4,20 @@
 #  BEGIN CUSTOMIZATIONS
 ###
 
-## Set Docker Image Parts
+### Set Docker Image Parts
 
 # (don't need docker image tag, it will be queried at runtime)
 DK_USER=andylytical
 DK_IMAGE=brewpi-backup
 
 
-## Set volume mounts
+### Set volume mounts
 
 # Associative array; key=src, val=tgt
 declare -A MOUNTPOINTS=( ["$HOME"]="$HOME" )
 
 
-## Set Environment Variable(s) for Container
+### Set Environment Variable(s) for Container
 declare -A ENVIRON
 
 # Google OAuth secret and credentials
@@ -34,15 +34,10 @@ ENVIRON['GOOGLE_DRIVE_FOLDER_ID']='1d57i-VAQRbCfLDIb9JCHGI3GPBK8cZ4O'
 # https://docs.google.com/spreadsheets/d/1U0B7wu07bCH5X6Yfc3FQWgNEwMpoNCg8eDPtjlH0j6w
 ENVIRON['GOOGLE_SHEETS_TEMPLATE_ID']='1U0B7wu07bCH5X6Yfc3FQWgNEwMpoNCg8eDPtjlH0j6w'
 
-# Name of the google spreadsheet to load data into
-# Can be just a prefix, must be enough to uniquely identify the spreadsheet
-# TODO - pass this on cmdline
-ENVIRON['GOOGLE_SHEETS_NAME_PREFIX']='20180714'
-
 # Inside the spreadsheet, which sheet to populate with data
-ENVIRON['GOOGLE_SHEETS_SHEET_NAME']='RIMS Data'
+ENVIRON['GOOGLE_SHEETS_SHEET_NAME']='Mash Data'
 
-# Which column (in the goole sheet) has the timestamp
+# Which column (in GOOGLE_SHEETS_SHEET_NAME) has the timestamp
 #ENVIRON['GOOGLE_SHEETS_TSDB_PRIMARY_COLUMN']='A'
 
 # Include only cols matching this regex, ignore all others
@@ -56,10 +51,6 @@ ENVIRON['GOOGLE_SHEETS_SHEET_NAME']='RIMS Data'
 ###
 
 
-# Default variable settings
-ENVIRON['BREWPI_BACKUP_INTERVAL_SECONDS']=60
-
-
 die() {
     echo "ERR: $*"
     exit 99
@@ -67,8 +58,7 @@ die() {
 
 
 latest_docker_tag() {
-    # Based on code from:
-    # https://stackoverflow.com/questions/28320134/how-to-list-all-tags-for-a-docker-image-on-a-remote-registry
+    # Based on code from: https://stackoverflow.com/q/28320134
     [[ $DEBUG -eq 1 ]] && set -x
     [[ $# -ne 1 ]] && die "latest_docker_tag: must have exactly 1 parameter, got '$#'"
     image="$1"
@@ -107,6 +97,7 @@ DEBUG=0
 TEST=0
 VERBOSE=1
 ENDWHILE=0
+ENVIRON['BREWPI_BACKUP_INTERVAL_SECONDS']=60
 while [[ $# -gt 0 ]] && [[ $ENDWHILE -eq 0 ]] ; do
     case $1 in
         -b) ENVIRON['BREWPI_BACKUP_BEERNAME']="$2"; shift;;
@@ -127,7 +118,6 @@ if [[ $DEBUG -eq 1 ]] ; then
     for k in "${!ENVIRON[@]}"; do printf '% 31s ... %s\n' "$k" "${ENVIRON[$k]}"; done
     set -x
 fi
-exit 1
 
 DK_TAG=$( latest_docker_tag "$DK_USER/$DK_IMAGE" )
 [[ -z "$DK_TAG" ]] && die "No tags found for docker image: '$DK_USER/$DK_IMAGE'"
