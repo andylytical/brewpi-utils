@@ -77,7 +77,7 @@ def update_cloud( local, cloud ):
         ) )
 
 
-def run_loop( continuous=True ):
+def run_loop( runonce=False ):
     pause = int( os.environ['BREWPI_BACKUP_INTERVAL_SECONDS'] )
     while True:
         print( "Start new loop...\n find latest beerlog" )
@@ -88,7 +88,7 @@ def run_loop( continuous=True ):
         assert_headers_equal( tsdb, beer )
         print( "  update cloud data" )
         update_cloud( beer, tsdb )
-        if not continuous:
+        if runonce:
             print( "  end" )
             break
         print( "  pause {}".format( pause ) )
@@ -100,5 +100,5 @@ if __name__ == '__main__':
     googl = SimpleGoogleDrive()
     val = True
     if 'BREWPI_BACKUP_RUNONCE' in os.environ:
-        val = bool( os.environ['BREWPI_BACKUP_RUNONCE'] )
-    run_loop( continuous=val )
+        val = os.environ['BREWPI_BACKUP_RUNONCE'] in ('1', 'True')
+    run_loop( runonce=val )
