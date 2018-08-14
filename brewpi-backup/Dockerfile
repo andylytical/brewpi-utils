@@ -9,4 +9,4 @@ COPY brewpi-backup/*.py /src/
 COPY submodules/*/*.py /src/
 RUN pip install -r /src/requirements.txt
 
-CMD ["bash"]
+CMD ["python", "brewpi_backup.py"]
