@@ -1,9 +1,12 @@
+from collections import deque
 from simplegoogledrive import SimpleGoogleDrive
 from timeseriesdb import TimeSeriesDB
-import os
-import simpledir
-import brewlog
 import bisect
+import brewlog
+import os
+import signal
+import simpledir
+import sys
 import time
 
 
@@ -77,9 +80,19 @@ def update_cloud( local, cloud ):
         ) )
 
 
+def hold_signal( signum, stack ):
+    global EVENTS
+    EVENTS.append( signum )
+
+
+def clean_exit( signum, stack ):
+    sys.exit()
+
 def run_loop( runonce=False ):
+    global EVENTS
     pause = int( os.environ['BREWPI_BACKUP_INTERVAL_SECONDS'] )
     while True:
+        signal.signal( 15, hold_signal )
         print( "Start new loop...\n find latest beerlog" )
         beer = get_latest_beerlog()
         print( "  get-or-create TSDB" )
@@ -91,14 +104,19 @@ def run_loop( runonce=False ):
         if runonce:
             print( "  end" )
             break
+        if len( EVENTS ) > 0:
+            clean_exit( EVENTS.popleft(), None )
+        signal.signal( 15, clean_exit )
         print( "  pause {}".format( pause ) )
         time.sleep( pause )
 
 
 if __name__ == '__main__':
+    EVENTS = deque()
+    signal.signal( 15, clean_exit )
     brew_logdir = simpledir.SimpleDir( '/home/pi/brewpi-data/data' )
     googl = SimpleGoogleDrive()
-    val = True
+    val = False
     if 'BREWPI_BACKUP_RUNONCE' in os.environ:
         val = os.environ['BREWPI_BACKUP_RUNONCE'] in ('1', 'True')
     run_loop( runonce=val )
