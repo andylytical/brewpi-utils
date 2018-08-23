@@ -11,11 +11,13 @@ fatal() {
 [[ $# -eq 1 ]] || fatal "expected 1 argument, got '$#'"
 [[ -d "$1" ]] || fatal "not a directory: '$1'"
 NAME="$1"
+dockerfile="$NAME"/Dockerfile
+[[ -f "$dockerfile" ]] || fatal "File not found: '$dockerfile'"
 
 set -x
 
 docker build \
-    -f $NAME/Dockerfile \
+    -f $dockerfile \
     -t $NAME \
     -t $USER/$NAME:$TS \
     -t $USER/$NAME:latest \

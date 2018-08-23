@@ -98,12 +98,13 @@ TEST=0
 VERBOSE=1
 ENDWHILE=0
 ENVIRON['BREWPI_BACKUP_INTERVAL_SECONDS']=60
+dkopts=( '-d' )
 while [[ $# -gt 0 ]] && [[ $ENDWHILE -eq 0 ]] ; do
     case $1 in
         -b) ENVIRON['BREWPI_BACKUP_BEERNAME']="$2"; shift;;
-        -d) DEBUG=1;;
+        -d) DEBUG=1; dkopts=( '-it' );;
         -h) usage; exit 0;;
-        -o) ENVIRON['BREWPI_BACKUP_RUN_ONCE']='1';;
+        -o) ENVIRON['BREWPI_BACKUP_RUNONCE']='1';;
         -s) ENVIRON['BREWPI_BACKUP_INTERVAL_SECONDS']="$2"; shift;;
         -t) TEST=1;;
         --) ENDWHILE=1;;
@@ -139,4 +140,5 @@ action=
 $action docker run \
     "${envs[@]}" \
     "${mounts[@]}" \
-    --rm -it "$IMAGE"
+    "${dkopts[@]}" \
+    "$IMAGE"
