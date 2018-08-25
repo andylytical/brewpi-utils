@@ -34,3 +34,5 @@ Enable Google API access
 1. `docker ps`
 #### Stop a docker container
 1. `docker stop CONTAINER-ID`
+#### Remove stopped (old) containers
+1. `docker ps -aq --no-trunc -f status=exited | xargs docker rm`
