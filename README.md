@@ -1,5 +1,15 @@
 Utilities for added functionality with BrewPi.
 
+# Brewpi-Backup
+Backup brewpi csv data to a google spreadsheet.
+## Usage
+Start docker container on Raspberry Pi:
+1. _One Time Setup_ (below)
+1. `curl -o /home/pi/brewpi-backup.sh https://github.com/andylytical/brewpi-utils/blob/master/brewpi-backup/dkrun.sh`
+1. Edit `/home/pi/brewpi-backup.sh`
+   1. Change environment variables as needed
+1. `/home/pi/brewpi-backup.sh`
+
 # One Time Setup
 Enable Google API access
 1. Go to [Google Cloud Platform Credentials Management](https://console.cloud.google.com/apis/credentials)
@@ -17,14 +27,9 @@ Enable Google API access
       1. Click the *Enable* button
       1. Find the *Google Sheets API* (part of the G Suite category) and click on it
       1. Click the *Enable* button
-
-
-# Brewpi-Backup
-Backup brewpi csv data to a google spreadsheet.
-## Usage
-Raspberry Pi:
-1. `curl -o /home/pi/brewpi-backup.sh https://raw.githubusercontent.com/andylytical/brewpi-utils/master/brewpi-backup.sh`
-1. Edit `/home/pi/brewpi-backup.sh`
-   1. Change environment variables as needed
-1. `/home/pi/brewpi-backup.sh`
-
+      
+# Docker Help
+#### View docker containers
+1. `docker ps`
+#### Stop a docker container
+1. `docker stop CONTAINER-ID`
