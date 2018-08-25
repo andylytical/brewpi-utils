@@ -8,6 +8,7 @@ Start docker container on Raspberry Pi:
 1. `curl -o /home/pi/brewpi-backup.sh https://raw.githubusercontent.com/andylytical/brewpi-utils/master/brewpi-backup/dkrun.sh`
 1. Edit `/home/pi/brewpi-backup.sh`
    1. Change environment variables as needed
+1. `chmod +x /home/pi/brewpi-backup.sh`
 1. `/home/pi/brewpi-backup.sh`
 
 # One Time Setup
@@ -33,3 +34,5 @@ Enable Google API access
 1. `docker ps`
 #### Stop a docker container
 1. `docker stop CONTAINER-ID`
+#### Remove stopped (old) containers
+1. `docker ps -aq --no-trunc -f status=exited | xargs -r docker rm`
