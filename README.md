@@ -8,6 +8,7 @@ Start docker container on Raspberry Pi:
 1. `curl -o /home/pi/brewpi-backup.sh https://raw.githubusercontent.com/andylytical/brewpi-utils/master/brewpi-backup/dkrun.sh`
 1. Edit `/home/pi/brewpi-backup.sh`
    1. Change environment variables as needed
+1. `chmod +x /home/pi/brewpi-backup.sh`
 1. `/home/pi/brewpi-backup.sh`
 
 # One Time Setup
