@@ -4,19 +4,6 @@
 #  BEGIN CUSTOMIZATIONS
 ###
 
-### Set Docker Image Parts
-
-# (don't need docker image tag, it will be queried at runtime)
-DK_USER=andylytical
-DK_IMAGE=brewpi-backup
-
-
-### Set volume mounts
-
-# Associative array; key=src, val=tgt
-declare -A MOUNTPOINTS=( ["$HOME"]="$HOME" )
-
-
 ### Set Environment Variable(s) for Container
 declare -A ENVIRON
 
@@ -49,6 +36,15 @@ ENVIRON['GOOGLE_SHEETS_SHEET_NAME']='Mash Data'
 ###
 #  END OF CUSTOMIZATIONS
 ###
+
+# Docker Image Parts
+# (don't need docker image tag, it will be queried at runtime)
+DK_USER=andylytical
+DK_IMAGE=brewpi-backup
+
+# Volume mounts
+# Associative array; key=src, val=tgt
+declare -A MOUNTPOINTS=( ["$HOME"]="$HOME" )
 
 
 die() {
