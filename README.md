@@ -5,7 +5,7 @@ Backup brewpi csv data to a google spreadsheet.
 ## Usage
 Start docker container on Raspberry Pi:
 1. _One Time Setup_ (below)
-1. `curl -o /home/pi/brewpi-backup.sh https://github.com/andylytical/brewpi-utils/blob/master/brewpi-backup/dkrun.sh`
+1. `curl -o /home/pi/brewpi-backup.sh https://raw.githubusercontent.com/andylytical/brewpi-utils/master/brewpi-backup/dkrun.sh`
 1. Edit `/home/pi/brewpi-backup.sh`
    1. Change environment variables as needed
 1. `/home/pi/brewpi-backup.sh`
