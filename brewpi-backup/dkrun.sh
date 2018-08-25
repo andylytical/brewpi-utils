@@ -33,6 +33,9 @@ ENVIRON['GOOGLE_SHEETS_SHEET_NAME']='Mash Data'
 # 1=keep empty cols, 0=filter empty cols
 #ENVIRON['BREWLOG_KEEP_EMPTY_COLS']=1
 
+# Update frequency (in seconds)
+ENVIRON['BREWPI_BACKUP_INTERVAL_SECONDS']=3600
+
 ###
 #  END OF CUSTOMIZATIONS
 ###
@@ -93,7 +96,6 @@ DEBUG=0
 TEST=0
 VERBOSE=1
 ENDWHILE=0
-ENVIRON['BREWPI_BACKUP_INTERVAL_SECONDS']=60
 dkopts=( '-d' )
 while [[ $# -gt 0 ]] && [[ $ENDWHILE -eq 0 ]] ; do
     case $1 in
